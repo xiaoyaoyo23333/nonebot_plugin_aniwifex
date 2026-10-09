@@ -5,6 +5,8 @@
 
 命令、业务逻辑、数据格式与持久化方式与 AstrBot 版保持一致。
 
+使用Minimax M3.1-Flash-Preview进行辅助
+
 ## 安装
 
 ```bash
@@ -80,12 +82,16 @@ ANIMEWIFEX_DATA_DIR=                # 数据目录，留空则用 <data_dir>/ani
 > 这里显式实现了前缀读取，因为 NoneBot2 的 `get_plugin_config` 是按字段名直接读环境变量
 > （如 `DATA_DIR`），既没有插件前缀，也会被全局同名配置项干扰。
 
-图床（配套仓库 https://github.com/monbed/wife ）按网络环境二选一：
-
+图床
+1.原插件配套图库：
+（配套仓库 https://github.com/monbed/wife ）按网络环境二选一：
 - 能直连 GitHub：`ANIMEWIFEX_IMAGE_BASE_URL=https://raw.githubusercontent.com/monbed/wife/main/`
 - 用反代：`https://fastly.jsdelivr.net/gh/monbed/wife@main/` 或 `https://cdn.jsdmirror.com/gh/monbed/wife@main/`
 
-也可以手动下载图片放进 `<数据目录>/img/wife/`，插件会优先从本地图库抽取，
+2.下载本插件配套的图库（需放在本地）
+[xiaoyaoyo23333/wife-x-ver](https://github.com/xiaoyaoyo23333/wife-x-ver)
+
+（也可以手动下载图片放进 `<数据目录>/img/wife/`，插件会优先从本地图库抽取，
 文件名建议 `作品名!角色名.jpg`：
 
 ```text
