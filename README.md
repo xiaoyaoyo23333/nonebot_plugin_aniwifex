@@ -7,6 +7,7 @@
 群聊里的「二次元老婆」玩法：每天抽一位二次元老婆，支持**牛老婆 / 换老婆 / 交换老婆**等互动。
 本仓库提供两个功能不同的版本，按群风格挑一个装。
 
+<<<<<<< HEAD
 ---
 
 ## 两个版本
@@ -36,6 +37,11 @@
 ## 快速开始
 
 ### 安装
+=======
+使用Minimax M3.1-Flash-Preview进行辅助
+
+## 安装
+>>>>>>> 563fe01e24fb3f4d5ca2a302610f3e0ef4bf3cfa
 
 ```bash
 # 完整版
@@ -51,7 +57,82 @@ nb-cli plugin install ./nonebot_plugin_animewifex_lite
 
 ### 准备图片（本地图库）
 
+<<<<<<< HEAD
 两个版本都是**纯本地模式**，不联网取图。请把图片放进数据目录：
+=======
+## 已验证的运行环境
+
+| NoneBot2 | OneBot 适配器 | pydantic | 结果 |
+| --- | --- | --- | --- |
+| 2.4.2 | 2.4.6 | 2.13 | ✅ 25 项功能测试通过 |
+| 2.4.2 | 2.4.3 | 2.13 | ✅ 25 项功能测试通过 |
+| 2.5.0 | 2.4.6 | 2.13 | ✅ 25 项功能测试通过（未来升级版本） |
+
+Windows 11 23H2 + Python 3.11.9 实测无差异：插件源码按 Python 3.9+ 语法编写，
+未使用 3.12 独有特性。
+
+## Windows 注意事项
+
+1. **时区数据（tzdata）**：Windows 的 Python 默认不带 IANA 时区库，NoneBot2 也不依赖
+   `tzdata`。未安装时插件不会崩溃，会退化为固定 UTC+8——由于默认时区本就是东八区，
+   「今天」的判断依然正确；但若你把 `ANIMEWIFEX_TIMEZONE` 改成其他时区（如 `America/New_York`
+   涉及夏令时的时区），请务必 `pip install tzdata`。
+   也可直接用环境变量 `TZ=Asia/Shanghai` 指定（NoneBot2 自身不读取 `TZ`）。
+
+2. **数据目录是相对路径**：默认的 `data/animewifex` 相对于 **NoneBot2 的启动目录（CWD）**。
+   如果你用计划任务 / NSSM / 快捷方式启动时 CWD 不是项目根目录，数据会落到别处。
+   建议在 `.env` 里显式指定绝对路径：`ANIMEWIFEX_DATA_DIR=D:/nonebot-bot/data/animewifex`。
+
+3. **本地图库文件名**：支持中文与 `!`、`空格` 等字符（`作品名!角色名.jpg`），读取与路径
+   校验均按 UTF-8 处理。
+
+## 配置
+
+在 `.env` 或系统环境变量中配置，插件级配置以 `ANIMEWIFEX_` 为前缀：
+
+```dotenv
+ANIMEWIFEX_ADMINS=["123456789"]      # 管理员 QQ 号列表
+ANIMEWIFEX_NEED_PREFIX=false        # 是否需要命令前缀触发
+ANIMEWIFEX_NTR_MAX=3                # 每日牛老婆次数
+ANIMEWIFEX_NTR_POSSIBILITY=0.2      # 牛老婆成功率
+ANIMEWIFEX_CHANGE_MAX_PER_DAY=3     # 每日换老婆次数
+ANIMEWIFEX_SWAP_MAX_PER_DAY=2       # 每日交换请求次数
+ANIMEWIFEX_RESET_MAX_USES_PER_DAY=3 # 每日重置机会次数
+ANIMEWIFEX_RESET_SUCCESS_RATE=0.3   # 重置成功率
+ANIMEWIFEX_RESET_MUTE_DURATION=300  # 重置失败禁言秒数
+ANIMEWIFEX_IMAGE_BASE_URL=https://cdn.jsdmirror.com/gh/monbed/wife@main
+ANIMEWIFEX_IMAGE_LIST_URL=https://animewife.dpdns.org/list.txt
+ANIMEWIFEX_TIMEZONE=Asia/Shanghai   # 判定「今天」用的时区；留空则依次回退 NoneBot2 全区 timezone、TZ、Asia/Shanghai
+ANIMEWIFEX_COMMAND_PRIORITY=0       # 匹配器优先级，越小越先执行（详见下方「与其它老婆插件共存」）
+ANIMEWIFEX_BLOCK_OTHER_PLUGINS=false # true=独占本插件命令；false=其它老婆插件仍可各自回应
+ANIMEWIFEX_DATA_DIR=                # 数据目录，留空则用 <data_dir>/animewifex
+```
+
+常见调法：
+
+| 想要的效果 | 配置 |
+| --- | --- |
+| 娱乐群，放开牛 | `ANIMEWIFEX_NTR_POSSIBILITY=0.8` + `ANIMEWIFEX_NTR_MAX=10` |
+| 禁止赌博 / 禁言太狠 | `ANIMEWIFEX_RESET_SUCCESS_RATE=1.0`（必成）或 `ANIMEWIFEX_RESET_MUTE_DURATION=0`（失败无痛） |
+| 熊孩子群 | `ANIMEWIFEX_CHANGE_MAX_PER_DAY=10` + `ANIMEWIFEX_SWAP_MAX_PER_DAY=5` |
+| 抽不到图时手动补图 | 往 `<数据目录>/img/wife/` 放 `作品名!角色名.jpg`，本地图库优先级最高 |
+
+> 配置优先级：默认值 < NoneBot2 插件配置机制 < `.env` 的 `ANIMEWIFEX_*` < 环境变量的 `ANIMEWIFEX_*`。
+> 这里显式实现了前缀读取，因为 NoneBot2 的 `get_plugin_config` 是按字段名直接读环境变量
+> （如 `DATA_DIR`），既没有插件前缀，也会被全局同名配置项干扰。
+
+图床
+1.原插件配套图库：
+（配套仓库 https://github.com/monbed/wife ）按网络环境二选一：
+- 能直连 GitHub：`ANIMEWIFEX_IMAGE_BASE_URL=https://raw.githubusercontent.com/monbed/wife/main/`
+- 用反代：`https://fastly.jsdelivr.net/gh/monbed/wife@main/` 或 `https://cdn.jsdmirror.com/gh/monbed/wife@main/`
+
+2.下载本插件配套的图库（需放在本地）
+[xiaoyaoyo23333/wife-x-ver](https://github.com/xiaoyaoyo23333/wife-x-ver)
+
+（也可以手动下载图片放进 `<数据目录>/img/wife/`，插件会优先从本地图库抽取，
+文件名建议 `作品名!角色名.jpg`：
+>>>>>>> 563fe01e24fb3f4d5ca2a302610f3e0ef4bf3cfa
 
 ```text
 data/animewifex/img/wife/        ← 完整版
@@ -171,4 +252,25 @@ Windows 11 23H2 + Python 3.11.9 实测通过；源码按 Python 3.9+ 语法编�
 
 ## License
 
+<<<<<<< HEAD
 MIT
+=======
+## 兼容性
+
+插件通过「能力探测 + 逐级回退」的方式编写，不绑定任何特定 NoneBot2 / 适配器版本：
+
+| 能力 | 处理方式 |
+| --- | --- |
+| bot / event 获取 | 一律用依赖注入（`bot: Bot, event: Event`），不碰 `matcher.bot` / `matcher.event`——后者在 2.4+ 已不存在 |
+| 机器人自身账号 | `bot.self_id`，不依赖 `Event.get_self_id()`（2.4+ 已移除） |
+| 群聊判定 | `get_session_type()` → 事件 `message_type` 字段 → `group_id` 属性 |
+| 发送者昵称 | `get_user_name()` → `sender.card` / `sender.nickname` → `member.card` / `user.display_name` |
+| 消息段构造 | 从事件取适配器的消息段类再调其 `text()` / `at()` / `image()`，缺失则按标准字段直接构造——核心基类在 2.4+ 已不再提供这些工厂方法 |
+| @ 目标解析 | 按 `segment.type == "at"` + `data["qq"]` 解析，不使用适配器特有的 `is_at()` |
+| 禁言 | 依次尝试 `bot.set_group_ban()` / `call_api("set_group_ban")` / `call_api("group_ban")` |
+| pydantic | 同时兼容 v1（`__fields__` / `parse_obj_as` / `.copy()`）与 v2（`model_fields` / `TypeAdapter` / `.model_copy()`） |
+
+经实测：**NoneBot2 2.4.2 与 2.5.0 的核心 `Event` / `Matcher` / `MessageSegment` API 形状完全一致**，
+均已移除上述便捷方法，因此当前实现对两个版本通用；更早的 2.2 / 2.3 因保留了这些方法，
+会走回退链的第一级，同样可用。
+>>>>>>> 563fe01e24fb3f4d5ca2a302610f3e0ef4bf3cfa
